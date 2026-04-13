@@ -77,41 +77,6 @@ CMD ["nginx", "-g", "daemon off;"]
 
 ---
 
-## 🚀 How to Build and Run with Docker Compose (recommended)
-
-Create a `docker-compose.yml` at the root of `server-magic-hub/`:
-
-```yaml
-version: '3.8'
-
-services:
-  backend:
-    build: ./backend
-    container_name: magic-hub-backend
-    ports:
-      - "5000:5000"
-    restart: unless-stopped
-
-  frontend:
-    build: ./frontend
-    container_name: magic-hub-frontend
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-    restart: unless-stopped
-```
-
-Then run:
-
-```bash
-docker-compose up -d
-```
-
-Access the app at `http://localhost`
-
----
-
 ## 🔧 Manual Docker commands (without Compose)
 
 ### Build images
