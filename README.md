@@ -162,18 +162,43 @@ server-magic-hub/
 
 ---
 
-## ✅ Environment variable for backend URL (optional)
+## ✅ Final fix – use relative API URLs (no hardcoded backend)
 
-If you want the frontend to use a different backend URL (e.g., when not using Docker Compose), you can modify the frontend `App.js` to read `process.env.REACT_APP_BACKEND_URL` and build with `--build-arg`. However, the Nginx proxy approach above is simpler and keeps the React build backend‑agnostic.
+### 1. Edit `App.js` in your frontend source
 
-Let me know if you need a version that uses runtime environment variables!
+```bash
+cd /workspaces/codespaces-blank/nodejs-2tier/frontend/src
+nano App.js
+```
 
+Find the line:
+```javascript
+const API_URL = `http://backend:5000`;
+```
 
-sudo lsof -i :5000
-# or
-sudo netstat -tulpn | grep :5000
+Change it to:
+```javascript
+const API_URL = '';   // empty = relative URLs
+```
 
+Save the file.
 
+### 2. Rebuild the frontend Docker image
 
-sudo systemctl stop magic-hub-backend
-sudo systemctl disable magic-hub-backend   # prevent auto-start
+```bash
+cd /workspaces/codespaces-blank/nodejs-2tier/frontend
+docker build -t magic-hub-frontend .
+```
+
+### 3. Remove the old frontend container and run a new one
+
+```bash
+docker rm -f frontend
+docker run -d --name frontend --network magic-hub-net -p 80:80 magic-hub-frontend
+```
+
+### 4. Test the application
+
+Open your browser at the Codespace’s public URL (or `http://localhost:80`).  
+You should now see the 5 default spells loaded correctly.
+
